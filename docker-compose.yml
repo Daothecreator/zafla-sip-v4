@@ -1,0 +1,96 @@
+name: zafla-sip-v4
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: zafla-db
+    environment:
+      POSTGRES_USER: zafla
+      POSTGRES_PASSWORD: zafla
+      POSTGRES_DB: zafla_sip
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - zafla-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U zafla -d zafla_sip"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: zafla-redis
+    volumes:
+      - redis_data:/data
+    networks:
+      - zafla-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: zafla-backend
+    env_file:
+      - ./backend/.env
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - zafla-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: zafla-frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - zafla-net
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: zafla-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - zafla_uploads:/var/www/uploads
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - zafla-net
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+  zafla_uploads:
+
+networks:
+  zafla-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
