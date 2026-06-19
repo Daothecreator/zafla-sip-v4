@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#0a0f18] text-white;
+    font-family: 'Caladea', 'Noto Serif SC', Cambria, Georgia, serif;
+  }
+
+  ::selection {
+    @apply bg-[#c9a84c] text-[#1a2332];
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-[#1a2332];
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-[#c9a84c] rounded-full;
+  }
+}
+
+@layer components {
+  .zafla-border-gold {
+    @apply border-2 border-[#c9a84c];
+  }
+  .zafla-card {
+    @apply bg-[#F5F0E8] text-[#1a1a1a] rounded-lg border border-[#c9a84c]/30 shadow-lg;
+  }
+  .zafla-btn-primary {
+    @apply bg-[#c9a84c] text-[#1a2332] font-bold px-6 py-2 rounded hover:bg-white transition-colors;
+  }
+  .zafla-input {
+    @apply bg-[#1a2332] border border-[#c9a84c]/50 text-white px-4 py-2 rounded focus:outline-none focus:border-[#c9a84c];
+  }
+  .zafla-terminal-bg {
+    @apply bg-black border border-[#c9a84c]/30 rounded-lg p-4 font-mono text-sm;
+  }
+}
