@@ -1,1 +1,1 @@
-See file content at D:/Database/ZAFLA_MASTER_SKILL.md - file too large to inline
+This file has been split into 3 parts due to size. See ZAFLA_MASTER_SKILL_PART1.md, ZAFLA_MASTER_SKILL_PART2.md, ZAFLA_MASTER_SKILL_PART3.md for the complete document.
